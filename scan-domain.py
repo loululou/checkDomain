@@ -29,21 +29,31 @@ def is_resolvable(domain: str) -> bool:
     except socket.gaierror:
         return False
 
-def check_domains_from_file(file_path: str):
-    with open(file_path, 'r') as f:
+def check_domains_from_file(input_file: str, output_file: str):
+    valid_domains = []
+
+    with open(input_file, 'r') as f:
         for line in f:
             domain = line.strip()
             if not domain:
                 continue  # skip empty lines
 
-            if is_syntactically_valid(domain):
-                if is_resolvable(domain):
-                    print(f"{domain} -> Valid & Resolvable")
-                else:
-                    print(f"{domain} -> Valid but NOT Resolvable")
-            else:
-                print(f"{domain} -> NOT Valid")
+            # Check if syntactically valid and resolvable
+            if is_syntactically_valid(domain) and is_resolvable(domain):
+                valid_domains.append(domain)
+
+    # Write valid domains to the output file
+    with open(output_file, 'w') as f_out:
+        for domain in valid_domains:
+            f_out.write(domain + '\n')
+
+    # Optionally, also print them to the console
+    print("Valid domains:")
+    for domain in valid_domains:
+        print(domain)
 
 if __name__ == "__main__":
-    # Change 'domains.txt' to your domain file path
-    check_domains_from_file('domains.txt')
+    # Example usage: 
+    #   - 'domains.txt' is the input list
+    #   - 'valid_domains.txt' will contain only valid domains
+    check_domains_from_file('domains.txt', 'valid_domains.txt')
